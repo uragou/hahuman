@@ -12,15 +12,36 @@ Hnum = 0
 
 #木構造したい
 class HTree:
-    def __init__(self,lf,ri,sm):
+    def __init__(self,lval,lname,rval,rname,oya = None):
 
-        self.oya = None
-        self.left  = lf
-        self.right = ri
-        self.hi = sm
+        self.oya = oya
+        self.lval  = lval
+        self.lname = lname
+        self.rval  = rval
+        self.rname = rname
+        self.hi = lval + rval
 
     def __str__(self): 
         return str( self.oya )
+
+    def Lmarge(self,lval,lname,rnode):
+        root = HTree(lval,lname,rnode.hi,"edge")
+        rnode.oya = root 
+        return root
+
+    def Rmarge(self,lnode,rval,rname):
+        root = HTree(lnode.hi,"edge",rval,rname)
+        lnode.oya = root 
+        return root
+
+    def marge(self,lnode,rnode):
+        root = HTree(lnode.hi,"edge",rnode.hi,"edge")
+        rnode.oya = root 
+        lnode.oya = root 
+        return root
+
+
+
 
 #2つデータとを取ってそいつを木にしたい。
 #途中で木が複数できたり統合したりする関係でおかしなことになっている
@@ -38,68 +59,39 @@ class HTree:
     3. 両方ある場合
 """
 def MakeTree(TBL):
-    print(Htable)
     Itree = []
     cnt = 0
 
-    if not Htable:
+    if not TBL:
         print("not data")
         return 
     while True:
-        cnt += 1
-        if not(Itree):
-            if len(Htable) == 1:
-                Itree.append(Htable)
+        if not Itree:
+            if len(TBL) == 1:
+                Itree = TBL
                 break
             else:
-                buf1 = min( Htable )
-                Htable.remove( min( Htable ) )
-        elif not(Htable):
-            if len(Itree) == 1:
-                break
-            buf1 = min( Itree )
+                Tbuf = HTree(TBL[0][0] , TBL[0][1] , TBL[1][0] , TBL[1][1])
+                TBL.remove(TBL[1])
+                TBL.remove(TBL[0])
+                Itree.append( [Tbuf.hi , Tbuf] )
         else:
-            print("Ibuf")
-            print( Itree )
-            print( min( Itree ) )
-            print("Ibuf")
-            Ibuf = min( Itree )
-            buf1 = min( Htable  )
-            
-            if Ibuf[0] < buf1[0]:
-                buf1 = Ibuf
-                Itree.remove( min( Itree ) )
-            else :
-                Htable.remove( min( Htable ) )
-                    
-        if not(Itree):
-            buf2 = min( Htable )
-            Htable.remove( min( Htable ) )
-            Tbuf = HTree(buf1[1] , buf2[1] , buf1[0] + buf2[0] )
-            Itree.append( [  Tbuf.hi , Tbuf ] )
-        elif not(Htable):
-            buf2 = min( Itree )
-            Itree.remove( min( Itree ) )
-            Tbuf = HTree(buf1[1] , buf2[1] , buf1[0] + buf2[0] )
-            Itree.append( [  Tbuf.hi , Tbuf ] )
-        else:
-            Ibuf = min( Itree )
-            buf1 = min( Htable  )
-            if Ibuf[0] < buf1[0]:
-                buf2 = Ibuf
-                Itree.remove( min( Itree ) )
-            else :
-                Htable.remove( min( Htable ) )
-            Tbuf = HTree(buf1[1] , buf2[1] , buf1[0] + buf2[0] )
-            Itree.append( [  Tbuf.hi , Tbuf ] )
-        print("-----------------------------")
-        for lop in range(len(Itree)):
-            print(Itree[lop])
-        print( cnt )
-
-    print("-----------------------------")
-    for lop in range(len(Itree)):
-        print(Itree)
+            if not TBL:
+                if len(Itree) == 1:
+                    break
+                else:
+                    Tbuf = HTree(None,None,None,None)
+                    Tbuf = Tbuf.marge(Itree[0][1],Itree[1][1])
+                    Itree.remove(Itree[1])
+                    Itree.remove(Itree[0])
+                    Itree.append( [Tbuf.hi , Tbuf] )
+                    pass
+            else:
+                pass
+        cnt += 1
+        if cnt == 10 :
+            break
+    print(Itree)
 
 #データ取り出し部分
 #１バイトごと取って数を数えている
