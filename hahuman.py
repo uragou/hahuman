@@ -19,7 +19,10 @@ class HTree:
         self.lname = lname
         self.rval  = rval
         self.rname = rname
-        self.hi = lval + rval
+        if not (lval == None and rval == None ):
+            self.hi = lval + rval
+        else:
+            self.hi = None
 
     def __str__(self): 
         return str( self.oya )
@@ -85,11 +88,69 @@ def MakeTree(TBL):
                     Itree.remove(Itree[1])
                     Itree.remove(Itree[0])
                     Itree.append( [Tbuf.hi , Tbuf] )
-                    pass
             else:
-                pass
+                if len(Itree) == 1 and len(Htable) == 1 :
+                    buf1 = TBL[0]
+                    buf2 = Itree[0]
+                    Itree.remove(Itree[0])
+                    TBL.remove(TBL[0])
+
+                    Tbuf = HTree(None,None,None,None)
+                    Tbuf = Tbuf.Rmarge(buf1[0],buf1[1],buf2[1])
+                    Itree.append( [Tbuf.hi , Tbuf] )
+                else :
+                    if Itree[0][0] > TBL[0][0]:
+                        buf1 = Itree[0]
+                        Itree.remove(Itree[0])
+
+                        if not Itree:
+                            buf2 = TBL[0]
+                            TBL.remove(TBL[0])
+
+                            Tbuf = HTree(None,None,None,None)
+                            Tbuf = Tbuf.Rmarge(buf1[1],buf2[0],buf2[1])
+                            Itree.append( [Tbuf.hi , Tbuf] )
+
+                        elif Itree[0][0] > TBL[0][0]:
+                            buf2 = Itree[0]
+                            Itree.remove(Itree[0])
+
+                            Tbuf = HTree(None,None,None,None)
+                            Tbuf = Tbuf.marge(buf1[1],buf2[1])
+                            Itree.append( [Tbuf.hi , Tbuf] )
+                        else:
+                            buf2 = TBL[0]
+                            TBL.remove(TBL[0])
+
+                            Tbuf = HTree(None,None,None,None)
+                            Tbuf = Tbuf.Lmarge(buf1[1],buf2[0],buf2[1])
+                            Itree.append( [Tbuf.hi , Tbuf] )
+
+                    else:
+                        buf1 = TBL[0]
+                        TBL.remove(TBL[0])
+
+                        if not TBL:
+                            buf2 = Itree[0]
+                            Itree.remove(Itree[0])
+                            Tbuf = HTree(None,None,None,None)
+                            Tbuf = Tbuf.Lmarge(buf1[0],buf1[1],buf2[1])
+                            Itree.append( [Tbuf.hi , Tbuf] )
+                        elif Itree[0][0] > TBL[0][0]:
+                            buf2 = Itree[0]
+                            Itree.remove(Itree[0])
+
+                            Tbuf = HTree(None,None,None,None)
+                            Tbuf = Tbuf.Rmarge(buf1[0],buf1[1],buf2[1])
+                            Itree.append( [Tbuf.hi , Tbuf] )
+                        else:
+                            buf2 = TBL[0]
+                            TBL.remove(TBL[0])
+
+                            Tbuf = HTree(buf1[0] , buf1[1] , buf2[0] , buf2[1])
+                            Itree.append( [Tbuf.hi , Tbuf] )
         cnt += 1
-        if cnt == 10 :
+        if cnt == 100 :
             break
     print(Itree)
 
