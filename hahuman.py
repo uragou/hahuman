@@ -1,10 +1,10 @@
 import os.path
 import numpy
 
-Fname = "test"
+Fname = "test2"
 ifp = open(Fname,"rb")
 
-siz = os.path.getsize("test")
+siz = os.path.getsize(Fname)
 Btable = {}
 Htable = []
 Wtable = None
@@ -28,21 +28,55 @@ class HTree:
         return str( self.oya )
 
     def Lmarge(self,lval,lname,rnode):
-        root = HTree(lval,lname,rnode.hi,"edge")
+        root = HTree(lval,lname,rnode.hi,rnode)
         rnode.oya = root 
         return root
 
     def Rmarge(self,lnode,rval,rname):
-        root = HTree(lnode.hi,"edge",rval,rname)
+        root = HTree(lnode.hi,lnode,rval,rname)
         lnode.oya = root 
         return root
 
     def marge(self,lnode,rnode):
-        root = HTree(lnode.hi,"edge",rnode.hi,"edge")
+        root = HTree(lnode.hi,lnode,rnode.hi,rnode)
         rnode.oya = root 
         lnode.oya = root 
         return root
+    
+    def seek(self,tar):
+        creData = ""
 
+        if self.lname == tar:
+            return str(0)
+        elif self.rname == tar:
+            return str(1)
+        else:
+            creData = self.lname.subseek(tar,creData)
+            print(str(creData) + " hf")
+            if creData == str(-1) :
+                creData = self.rname.subseek(tar,creData)
+        return creData
+
+    def subseek(self,tar,data):
+        print(tar)
+        print(self.lname)
+        print(self.rname)
+        
+        if not (type(self.lname) is str):
+            return self.lname.subseek(tar,data + str(0))
+        if not (type(self.rname) is str):
+            return self.rname.subseek(tar,data + str(1))
+
+        if self.lname == tar:
+            data += str(0)
+        elif self.rname == tar:
+            data += str(1)
+        else:
+            return "-1"
+        return data
+    
+    def __str__(self):
+        return "edge"
 
 
 
@@ -64,6 +98,9 @@ class HTree:
 def MakeTree(TBL):
     Itree = []
     cnt = 0
+
+    for lop in range(len(TBL)):
+        print(TBL[lop])
 
     if not TBL:
         print("not data")
@@ -153,6 +190,17 @@ def MakeTree(TBL):
         if cnt == 100 :
             break
     print(Itree)
+    print(Itree[0][1].seek("b85"))
+    """
+    print(str(Itree[0][1].lname) + " " + str(Itree[0][1].lval))
+    print(str(Itree[0][1].rname) + " " + str(Itree[0][1].rval))
+    print(str(Itree[0][1].lname.lname) + " " + str(Itree[0][1].lname.lval))
+    print(str(Itree[0][1].lname.rname) + " " + str(Itree[0][1].lname.rval))
+    print(str(Itree[0][1].rname.lname) + " " + str(Itree[0][1].rname.lval))
+    print(str(Itree[0][1].rname.rname.lname) + " " + str(Itree[0][1].rname.rname.lval))
+    print(str(Itree[0][1].rname.rname.rname) + " " + str(Itree[0][1].rname.rname.rval))
+    """
+
 
 #データ取り出し部分
 #１バイトごと取って数を数えている
