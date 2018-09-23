@@ -1,7 +1,7 @@
 import os.path
 import numpy
 
-Fname = "test2"
+Fname = "test"
 ifp = open(Fname,"rb")
 
 siz = os.path.getsize(Fname)
@@ -51,29 +51,28 @@ class HTree:
         elif self.rname == tar:
             return str(1)
         else:
-            creData = self.lname.subseek(tar,creData)
-            print(str(creData) + " hf")
+            creData = self.lname.subseek(tar,"0")
             if creData == str(-1) :
-                creData = self.rname.subseek(tar,creData)
+                creData = self.rname.subseek(tar,"1")
         return creData
 
     def subseek(self,tar,data):
-        print(tar)
-        print(self.lname)
-        print(self.rname)
-        
-        if not (type(self.lname) is str):
-            return self.lname.subseek(tar,data + str(0))
-        if not (type(self.rname) is str):
-            return self.rname.subseek(tar,data + str(1))
-
         if self.lname == tar:
-            data += str(0)
+            return data + str(0)
         elif self.rname == tar:
-            data += str(1)
-        else:
-            return "-1"
-        return data
+            return data + str(1)
+        
+        buf = ""
+        if not (type(self.lname) is str):
+            buf = self.lname.subseek(tar,data + str(0))
+            if not (buf == "-1"):
+                return  buf
+        if not (type(self.rname) is str):
+            buf = self.rname.subseek(tar,data + str(1))
+            if not (buf == "-1"):
+                return  buf
+        
+        return "-1"
     
     def __str__(self):
         return "edge"
@@ -98,6 +97,8 @@ class HTree:
 def MakeTree(TBL):
     Itree = []
     cnt = 0
+    
+    lis = TBL[:]
 
     for lop in range(len(TBL)):
         print(TBL[lop])
@@ -190,16 +191,17 @@ def MakeTree(TBL):
         if cnt == 100 :
             break
     print(Itree)
-    print(Itree[0][1].seek("b85"))
-    """
-    print(str(Itree[0][1].lname) + " " + str(Itree[0][1].lval))
-    print(str(Itree[0][1].rname) + " " + str(Itree[0][1].rval))
-    print(str(Itree[0][1].lname.lname) + " " + str(Itree[0][1].lname.lval))
-    print(str(Itree[0][1].lname.rname) + " " + str(Itree[0][1].lname.rval))
-    print(str(Itree[0][1].rname.lname) + " " + str(Itree[0][1].rname.lval))
-    print(str(Itree[0][1].rname.rname.lname) + " " + str(Itree[0][1].rname.rname.lval))
-    print(str(Itree[0][1].rname.rname.rname) + " " + str(Itree[0][1].rname.rname.rval))
-    """
+
+    HAtable = []
+
+    for lop in range(len(lis)):
+        HAtable.append( [ lis[lop][1] , Itree[0][1].seek(lis[lop][1]) ] )
+
+    for lop in range(len(HAtable)):
+        print(HAtable[lop])
+    return HAtable
+
+    #print(Itree[0][1].seek("b255"))
 
 
 #データ取り出し部分
