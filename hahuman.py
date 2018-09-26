@@ -1,5 +1,4 @@
 import os.path
-import numpy
 
 Fname = "test"
 ifp = open(Fname,"rb")
@@ -192,16 +191,14 @@ def MakeTree(TBL):
             break
     print(Itree)
 
-    HAtable = []
+    HAtable = {}
 
     for lop in range(len(lis)):
-        HAtable.append( [ lis[lop][1] , Itree[0][1].seek(lis[lop][1]) ] )
+        HAtable[ lis[lop][1] ] = Itree[0][1].seek(lis[lop][1]) 
 
-    for lop in range(len(HAtable)):
-        print(HAtable[lop])
+    print(HAtable)
+
     return HAtable
-
-    #print(Itree[0][1].seek("b255"))
 
 
 #データ取り出し部分
@@ -216,32 +213,23 @@ for lop in range(siz):
     else:
         Btable[Bget] = 1
 
-#ソート部分
-#print(Btable)
-#print(len(Btable))
-#print(max(Btable.values()))
 BStable = sorted(Btable.items() , key = lambda x:x[1])
-#print(BStable)
+
 
 #単純に数えていたバイト列を出現率に変えている
 for lop in range( len( BStable ) ):
     Htable.append( [ Btable[ BStable[lop][0] ] / siz , BStable[lop][0] ] )
     
-MakeTree(Htable)
+Htable = MakeTree(Htable)
 
 ofp = open(Fname + ".hhmn" , "wb")
 ifp.seek(0)
 
-"""
 for lop in range(siz):
     data = ifp.read(1)
-
     Bget = "b" + str(ord(data))
-    print(Bget)
-    print(Htable[ Bget ])
-    print( bin(Htable[ Bget ]) )
-    ofp.write( bin(Htable[ Bget ]) )
-"""
+    #print(Htable[ Bget ])
+
 
 ifp.close()
 ofp.close()
