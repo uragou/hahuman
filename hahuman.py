@@ -99,9 +99,6 @@ def MakeTree(TBL):
     
     lis = TBL[:]
 
-    for lop in range(len(TBL)):
-        print(TBL[lop])
-
     if not TBL:
         print("not data")
         return 
@@ -189,14 +186,11 @@ def MakeTree(TBL):
         cnt += 1
         if cnt == 100 :
             break
-    print(Itree)
 
     HAtable = {}
 
     for lop in range(len(lis)):
         HAtable[ lis[lop][1] ] = Itree[0][1].seek(lis[lop][1]) 
-
-    print(HAtable)
 
     return HAtable
 
@@ -222,14 +216,26 @@ for lop in range( len( BStable ) ):
     
 Htable = MakeTree(Htable)
 
-ofp = open(Fname + ".hhmn" , "wb")
+ofp = open(Fname + ".hhmn" , "w+b")
+tfp = open(Fname + ".himn" , "w+")
 ifp.seek(0)
+brry = ""
 
 for lop in range(siz):
     data = ifp.read(1)
     Bget = "b" + str(ord(data))
-    #print(Htable[ Bget ])
 
+    brry += Htable[ Bget ]
 
+    if len(brry) >= 8:
+        ofp.write( int(brry[0:8] , 2).to_bytes(1, byteorder='big' ) )
+        brry = brry[8:]
+
+ofp.write( int(brry , 2).to_bytes(1, byteorder='big' ) )
+
+for num , mo in Htable.items():
+    tfp.write( num + "," + mo + "\n" )
+        
 ifp.close()
+tfp.close()
 ofp.close()
