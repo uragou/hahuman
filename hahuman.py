@@ -1,6 +1,6 @@
 import os.path
 
-Fname = "test"
+Fname = "test.bmp"
 ifp = open(Fname,"rb")
 
 siz = os.path.getsize(Fname)
@@ -197,6 +197,8 @@ def MakeTree(TBL):
 
 #データ取り出し部分
 #１バイトごと取って数を数えている
+print("open " + Fname)
+
 for lop in range(siz):
     data = ifp.read(1)
 
@@ -213,7 +215,7 @@ BStable = sorted(Btable.items() , key = lambda x:x[1])
 #単純に数えていたバイト列を出現率に変えている
 for lop in range( len( BStable ) ):
     Htable.append( [ Btable[ BStable[lop][0] ] / siz , BStable[lop][0] ] )
-    
+
 Htable = MakeTree(Htable)
 
 ofp = open(Fname + ".hhmn" , "w+b")
@@ -221,6 +223,7 @@ tfp = open(Fname + ".himn" , "w+")
 ifp.seek(0)
 brry = ""
 
+print("create file 1/2")
 for lop in range(siz):
     data = ifp.read(1)
     Bget = "b" + str(ord(data))
@@ -233,6 +236,7 @@ for lop in range(siz):
 
 ofp.write( int(brry , 2).to_bytes(1, byteorder='big' ) )
 
+print("create file 2/2")
 for num , mo in Htable.items():
     tfp.write( num + "," + mo + "\n" )
         
