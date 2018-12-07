@@ -27,6 +27,7 @@ class HTree:
         return str( self.oya )
 
     def Lmarge(self,lval,lname,rnode):
+
         root = HTree(lval,lname,rnode.hi,rnode)
         rnode.oya = root 
         return root
@@ -44,8 +45,9 @@ class HTree:
     
     def seek(self,tar):
         creData = ""
-
+        
         if self.lname == tar:
+            print(self.lname)
             return str(0)
         elif self.rname == tar:
             return str(1)
@@ -128,24 +130,24 @@ def MakeTree(TBL):
                     buf2 = Itree[0]
                     Itree.remove(Itree[0])
                     TBL.remove(TBL[0])
-
                     Tbuf = HTree(None,None,None,None)
-                    Tbuf = Tbuf.Rmarge(buf1[0],buf1[1],buf2[1])
+                    Tbuf = Tbuf.Rmarge(buf2[1],buf1[0],buf1[1])
                     Itree.append( [Tbuf.hi , Tbuf] )
                 else :
                     if Itree[0][0] > TBL[0][0]:
+                        
                         buf1 = Itree[0]
                         Itree.remove(Itree[0])
 
                         if not Itree:
                             buf2 = TBL[0]
                             TBL.remove(TBL[0])
-
                             Tbuf = HTree(None,None,None,None)
                             Tbuf = Tbuf.Rmarge(buf1[1],buf2[0],buf2[1])
                             Itree.append( [Tbuf.hi , Tbuf] )
 
                         elif Itree[0][0] > TBL[0][0]:
+                            
                             buf2 = Itree[0]
                             Itree.remove(Itree[0])
 
@@ -184,11 +186,8 @@ def MakeTree(TBL):
                             Tbuf = HTree(buf1[0] , buf1[1] , buf2[0] , buf2[1])
                             Itree.append( [Tbuf.hi , Tbuf] )
         cnt += 1
-        if cnt == 100 :
-            break
 
     HAtable = {}
-
     for lop in range(len(lis)):
         HAtable[ lis[lop][1] ] = Itree[0][1].seek(lis[lop][1]) 
 
@@ -201,7 +200,6 @@ print("open " + Fname)
 
 for lop in range(siz):
     data = ifp.read(1)
-
     Bget = "b" + str(ord(data))
 
     if Bget in Btable:
@@ -227,14 +225,13 @@ print("create file 1/2")
 for lop in range(siz):
     data = ifp.read(1)
     Bget = "b" + str(ord(data))
-
     brry += Htable[ Bget ]
 
-    if len(brry) >= 8:
+    while len(brry) >= 8:
         ofp.write( int(brry[0:8] , 2).to_bytes(1, byteorder='big' ) )
         brry = brry[8:]
-
-ofp.write( int(brry , 2).to_bytes(1, byteorder='big' ) )
+if not(brry == ""):
+    ofp.write( int(brry , 2).to_bytes(1, byteorder='big' ) )
 
 print("create file 2/2")
 for num , mo in Htable.items():
