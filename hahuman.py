@@ -190,7 +190,6 @@ def MakeTree(TBL):
     HAtable = {}
     for lop in range(len(lis)):
         HAtable[ lis[lop][1] ] = Itree[0][1].seek(lis[lop][1]) 
-    print(HAtable)
     return HAtable
 
 
