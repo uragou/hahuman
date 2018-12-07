@@ -1,6 +1,6 @@
 import os.path
 
-Fname = "DSCF0002.JPG"
+Fname = "test.bmp"
 ifp = open(Fname,"rb")
 
 siz = os.path.getsize(Fname)
@@ -107,8 +107,8 @@ def MakeTree(TBL):
     while True:
         if not Itree:
             if len(TBL) == 1:
-                Itree = TBL
-                break
+                print("data error")
+                exit()
             else:
                 Tbuf = HTree(TBL[0][0] , TBL[0][1] , TBL[1][0] , TBL[1][1])
                 TBL.remove(TBL[1])
@@ -197,14 +197,19 @@ def MakeTree(TBL):
 #１バイトごと取って数を数えている
 print("open " + Fname)
 
+
 for lop in range(siz):
     data = ifp.read(1)
     Bget = "b" + str(ord(data))
-
     if Bget in Btable:
         Btable[Bget] = Btable[Bget] + 1
     else:
         Btable[Bget] = 1
+
+
+
+BStable = sorted(Btable.items() , key = lambda x:x[1])
+
 
 BStable = sorted(Btable.items() , key = lambda x:x[1])
 
@@ -220,16 +225,20 @@ ifp.seek(0)
 brry = ""
 
 print("create file 1/2")
-while True:
+for lop in range(siz):
     data = ifp.read(1)
-    if not data:
-        break
     Bget = "b" + str(ord(data))
     brry += Htable[ Bget ]
     while len(brry) >= 8:
         ofp.write( int(brry[0:8] , 2).to_bytes(1, byteorder='big' ) )
         brry = brry[8:]
 
+
+if not(brry == ""):
+    while len(brry) < 8:
+        brry += "0"
+    ofp.write( int(brry[0:8] , 2).to_bytes(1, byteorder='big' ) )
+    brry = brry[8:]
 
 print("create file 2/2")
 for num , mo in Htable.items():

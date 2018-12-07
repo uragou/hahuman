@@ -1,6 +1,6 @@
 import os.path
 
-Fname = "DSCF0002.JPG"
+Fname = "test.bmp"
 hhfp = open(Fname + ".hhmn","rb")
 hifp = open(Fname + ".himn","r")
 txtfp = open(Fname ,"w+b")
