@@ -1,6 +1,6 @@
 import os.path
 
-Fname = "test.bmp"
+Fname = "DSCF0002.JPG"
 ifp = open(Fname,"rb")
 
 siz = os.path.getsize(Fname)
@@ -134,7 +134,7 @@ def MakeTree(TBL):
                     Tbuf = Tbuf.Rmarge(buf2[1],buf1[0],buf1[1])
                     Itree.append( [Tbuf.hi , Tbuf] )
                 else :
-                    if Itree[0][0] > TBL[0][0]:
+                    if Itree[0][0] <= TBL[0][0]:
                         
                         buf1 = Itree[0]
                         Itree.remove(Itree[0])
@@ -146,7 +146,7 @@ def MakeTree(TBL):
                             Tbuf = Tbuf.Rmarge(buf1[1],buf2[0],buf2[1])
                             Itree.append( [Tbuf.hi , Tbuf] )
 
-                        elif Itree[0][0] > TBL[0][0]:
+                        elif Itree[0][0] <= TBL[0][0]:
                             
                             buf2 = Itree[0]
                             Itree.remove(Itree[0])
@@ -159,7 +159,7 @@ def MakeTree(TBL):
                             TBL.remove(TBL[0])
 
                             Tbuf = HTree(None,None,None,None)
-                            Tbuf = Tbuf.Lmarge(buf1[1],buf2[0],buf2[1])
+                            Tbuf = Tbuf.Lmarge(buf2[0],buf2[1],buf1[1])
                             Itree.append( [Tbuf.hi , Tbuf] )
 
                     else:
@@ -172,12 +172,12 @@ def MakeTree(TBL):
                             Tbuf = HTree(None,None,None,None)
                             Tbuf = Tbuf.Lmarge(buf1[0],buf1[1],buf2[1])
                             Itree.append( [Tbuf.hi , Tbuf] )
-                        elif Itree[0][0] > TBL[0][0]:
+                        elif Itree[0][0] <= TBL[0][0]:
                             buf2 = Itree[0]
                             Itree.remove(Itree[0])
 
                             Tbuf = HTree(None,None,None,None)
-                            Tbuf = Tbuf.Rmarge(buf1[0],buf1[1],buf2[1])
+                            Tbuf = Tbuf.Rmarge(buf2[1],buf1[0],buf1[1])
                             Itree.append( [Tbuf.hi , Tbuf] )
                         else:
                             buf2 = TBL[0]
@@ -190,7 +190,7 @@ def MakeTree(TBL):
     HAtable = {}
     for lop in range(len(lis)):
         HAtable[ lis[lop][1] ] = Itree[0][1].seek(lis[lop][1]) 
-
+    print(HAtable)
     return HAtable
 
 
@@ -215,28 +215,27 @@ for lop in range( len( BStable ) ):
     Htable.append( [ Btable[ BStable[lop][0] ] / siz , BStable[lop][0] ] )
 
 Htable = MakeTree(Htable)
-
 ofp = open(Fname + ".hhmn" , "w+b")
 tfp = open(Fname + ".himn" , "w+")
 ifp.seek(0)
 brry = ""
 
 print("create file 1/2")
-for lop in range(siz):
+while True:
     data = ifp.read(1)
+    if not data:
+        break
     Bget = "b" + str(ord(data))
     brry += Htable[ Bget ]
-
     while len(brry) >= 8:
         ofp.write( int(brry[0:8] , 2).to_bytes(1, byteorder='big' ) )
         brry = brry[8:]
-if not(brry == ""):
-    ofp.write( int(brry , 2).to_bytes(1, byteorder='big' ) )
+
 
 print("create file 2/2")
 for num , mo in Htable.items():
     tfp.write( num + "," + mo + "\n" )
-        
+
 ifp.close()
 tfp.close()
 ofp.close()
